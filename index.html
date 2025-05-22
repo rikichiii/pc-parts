@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple PC Parts E-Commerce Website</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+  <h1>Simple PC Parts Store</h1>
+</header>
+
+<div class="container">
+  <section class="product-list" id="product-list">
+    <!-- Products inserted here by JavaScript -->
+  </section>
+
+  <section class="cart" id="cart">
+    <h2>Shopping Cart</h2>
+    <div id="cart-items">
+      <p>Your cart is empty.</p>
+    </div>
+    <div class="cart-total" id="cart-total">Total: $0.00</div>
+  </section>
+</div>
+
+<script>
+  // Sample PC parts products
+  const products = [
+    {id: 1, name: "Motherboard (ASUS Prime B550M-A)", price: 129.99, image: "https://images.unsplash.com/photo-1587825140608-779039dfd898?auto=format&fit=crop&w=200&q=80"},
+    {id: 2, name: "Power Supply (Corsair RM750x)", price: 109.99, image: "https://images.unsplash.com/photo-1582878927823-34d165d89d2f?auto=format&fit=crop&w=200&q=80"},
+    {id: 3, name: "CPU (AMD Ryzen 5 5600X)", price: 199.99, image: "https://images.unsplash.com/photo-1581349481395-a7842c327f38?auto=format&fit=crop&w=200&q=80"},
+    {id: 4, name: "AIO Cooler (NZXT Kraken X53 RGB)", price: 129.99, image: "https://images.unsplash.com/photo-1607851895653-cdb0e058dbfc?auto=format&fit=crop&w=200&q=80"},
+    {id: 5, name: "Case Fans (Corsair LL120 RGB, 3-pack)", price: 99.99, image: "https://images.unsplash.com/photo-1605236452272-7db183ffa568?auto=format&fit=crop&w=200&q=80"},
+    {id: 6, name: "GPU (NVIDIA RTX 3070)", price: 499.99, image: ""},  // image removed
+    {id: 7, name: "SSD (Samsung 970 EVO Plus 1TB)", price: 149.99, image:  ""}, // image removed
+    {id: 8, name: "RAM (Corsair Vengeance LPX 16GB DDR4)", price: 79.99, image: "https://images.unsplash.com/photo-1573497164014-ec3a9ee4fc5e?auto=format&fit=crop&w=200&q=80"},
+    {id: 9, name: "CPU Cooler (Noctua NH-D15)", price: 89.99, image: "https://images.unsplash.com/photo-1590512706019-8bf368e16f6b?auto=format&fit=crop&w=200&q=80"},
+    {id: 10, name: "PC Case (NZXT H510)", price: 79.99, image: ""},  // image removed
+    {id: 11, name: "Monitor (Dell 27\" 4K UHD)", price: 349.99, image: "https://images.unsplash.com/photo-1549924231-5c59c54c9bbb?auto=format&fit=crop&w=200&q=80"},
+    {id: 12, name: "Mechanical Keyboard (Corsair K95 RGB)", price: 199.99, image: "https://images.unsplash.com/photo-1582407947304-c28ffac6d9ff?auto=format&fit=crop&w=200&q=80"}
+  ];
+
+  let cart = [];
+
+  function formatPrice(price) {
+    return '$' + price.toFixed(2);
+  }
+
+  function renderProducts() {
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = '';
+    products.forEach(product => {
+      const prodElem = document.createElement('div');
+      prodElem.className = 'product';
+      prodElem.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <div class="price">${formatPrice(product.price)}</div>
+        <button data-id="${product.id}">Add to Cart</button>
+      `;
+      productList.appendChild(prodElem);
+    });
+
+    // Add button event listeners
+    document.querySelectorAll('.product button').forEach(button => {
+      button.addEventListener('click', () => {
+        const id = parseInt(button.getAttribute('data-id'));
+        addToCart(id);
+      });
+    });
+  }
+
+  function renderCart() {
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartTotalDiv = document.getElementById('cart-total');
+
+    if(cart.length === 0) {
+      cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+      cartTotalDiv.textContent = 'Total: $0.00';
+      return;
+    }
+
+    let total = 0;
+    cartItemsDiv.innerHTML = '';
+    cart.forEach(item => {
+      total += item.price * item.quantity;
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'cart-item';
+      itemDiv.innerHTML = `
+        <div>${item.name} x${item.quantity}</div>
+        <div>${formatPrice(item.price * item.quantity)}</div>
+      `;
+      cartItemsDiv.appendChild(itemDiv);
+    });
+    cartTotalDiv.textContent = 'Total: ' + formatPrice(total);
+  }
+
+  function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    if(!product) return;
+    const cartItem = cart.find(item => item.id === productId);
+    if(cartItem) {
+      cartItem.quantity++;
+    } else {
+      cart.push({...product, quantity: 1});
+    }
+    renderCart();
+  }
+
+  // Initial render
+  renderProducts();
+  renderCart();
+</script>
+
+</body>
+</html>
